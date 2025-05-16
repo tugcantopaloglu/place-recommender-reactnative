@@ -1,0 +1,76 @@
+{
+  "expo": {
+    "name": "Mekan Önerileri",
+    "slug": "place-recommender",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.placerecommender",
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false,
+        "googleMapsApiKey": "DUMMY_IOS_GOOGLE_MAPS_API_KEY"
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Yakınınızdaki favori mekanlarınızı bulabilmek için konumunuza ihtiyacımız var.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Arka planda çalışırken de favori mekanlarınıza yaklaştığınızda bildirim alabilmeniz için konumunuza ihtiyacımız var.",
+        "NSLocationAlwaysUsageDescription": "Arka planda çalışırken de favori mekanlarınıza yaklaştığınızda bildirim alabilmeniz için konumunuza ihtiyacımız var.",
+        "UIBackgroundModes": [
+          "location",
+          "fetch",
+          "remote-notification"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.yourcompany.placerecommender",
+      "versionCode": 1,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "DUMMY_ANDROID_GOOGLE_MAPS_API_KEY"
+        }
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Arka planda çalışırken de favori mekanlarınıza yaklaştığınızda bildirim alabilmeniz için konumunuza ihtiyacımız var.",
+          "locationAlwaysPermission": "Arka planda çalışırken yakınınızdaki mekanlar hakkında bildirim alabilmek için konum bilginize ihtiyacımız var.",
+          "locationWhenInUsePermission": "Yakınınızdaki mekanları göstermek ve size özel öneriler sunmak için konum bilginize ihtiyacımız var.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ],
+      "expo-notifications"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id"
+      }
+    },
+    "newArchEnabled": true
+  }
+} 
