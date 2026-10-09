@@ -39,7 +39,9 @@ notification and store modules with isolated native and Firebase dependencies.
 They verify task registration before tracking starts, persisted user binding,
 permission denial, empty events, the daily trigger and the settings reducer.
 The bundle command exports Android and iOS Hermes bundles and assets into `dist`.
-CI runs these checks on pushes and pull requests without publishing an app.
+CI runs these checks and a blocking critical-level dependency audit on pushes
+and pull requests without publishing an app. Remaining high and moderate audit
+findings are documented below.
 
 These checks do not verify Firebase authentication, OAuth sign-in, Google Places
 responses, device map rendering, background location delivery, notification

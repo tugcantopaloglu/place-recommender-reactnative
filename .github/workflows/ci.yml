@@ -19,4 +19,5 @@ jobs:
       - run: npm ci
       - run: npm run type-check
       - run: npm test
+      - run: npm audit --audit-level=critical
       - run: npm run bundle
