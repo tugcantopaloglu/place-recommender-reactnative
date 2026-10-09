@@ -69,8 +69,13 @@ permissions still require user consent on the device.
 ## Dependency maintenance
 
 Compatible dependency updates and removal of unused self-reference and legacy
-Google sign-in packages reduce the original audit findings. The retained SDK 52
-dependency graph still has reported vulnerabilities, including a critical finding.
+Google sign-in packages reduce the original audit findings. A scoped Expo CLI
+override uses patched tar 7.5.22. The install script corrects the old CLI's CommonJS
+namespace import, checks the exact CLI/parser versions and expected import shape,
+and fails before patching unexpected source. Archive tests run real Expo template
+extraction with the patched parser. Review this bridge when upgrading Expo.
+
+The retained SDK 52 dependency graph still has reported high and moderate findings.
 Use `npm audit` to inspect the current graph. A coordinated Expo/Firebase upgrade
 needs type checking, bundling and native/provider acceptance; an automatic forced
 downgrade does not establish compatibility.
