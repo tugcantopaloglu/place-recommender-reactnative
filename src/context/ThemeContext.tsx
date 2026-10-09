@@ -128,7 +128,7 @@ export const darkTheme = {
   ],
 };
 
-type Theme = typeof lightTheme;
+type Theme = typeof lightTheme | typeof darkTheme;
 
 interface ThemeContextType {
   theme: Theme;
@@ -136,7 +136,7 @@ interface ThemeContextType {
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const colorScheme = useColorScheme();
@@ -165,4 +165,4 @@ export const useTheme = () => {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
-}; 
+};

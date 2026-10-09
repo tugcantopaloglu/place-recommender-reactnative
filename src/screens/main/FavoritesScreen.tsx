@@ -9,12 +9,14 @@ import { removeFromFavorites, removeFromToVisit } from '../../store/slices/place
 import { ScreenLayout } from '../../components/common/ScreenLayout';
 import { Place } from '../../store/slices/placesSlice';
 
+const TabViewWithChildren: React.ComponentType<React.PropsWithChildren<React.ComponentProps<typeof TabView>>> = TabView;
+
 const FavoritesScreen = () => {
   const { theme } = useTheme();
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [index, setIndex] = useState(0);
-  
+
   const favorites = useSelector((state: RootState) => state.places.favorites);
   const toVisit = useSelector((state: RootState) => state.places.toVisit);
 
@@ -104,7 +106,7 @@ const FavoritesScreen = () => {
           value={index}
           onChange={setIndex}
           indicatorStyle={{ backgroundColor: theme.colors.primary }}
-          containerStyle={{ backgroundColor: theme.colors.card }}
+          style={{ backgroundColor: theme.colors.card }}
         >
           <Tab.Item
             title="Favoriler"
@@ -118,7 +120,7 @@ const FavoritesScreen = () => {
           />
         </Tab>
 
-        <TabView value={index} onChange={setIndex} animationType="spring">
+        <TabViewWithChildren value={index} onChange={setIndex} animationType="spring">
           <TabView.Item style={styles.tabContent}>
             <FlatList
               data={favorites}
@@ -137,7 +139,7 @@ const FavoritesScreen = () => {
               ListEmptyComponent={renderEmptyComponent}
             />
           </TabView.Item>
-        </TabView>
+        </TabViewWithChildren>
       </View>
     </ScreenLayout>
   );
@@ -210,4 +212,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FavoritesScreen; 
+export default FavoritesScreen;

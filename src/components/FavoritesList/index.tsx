@@ -7,6 +7,8 @@ import { RootState } from '../../store';
 import { useTheme } from '../../hooks/useTheme';
 import { Text, Card, Button, Icon } from 'react-native-elements';
 
+const CardWithChildren: React.ComponentType<React.PropsWithChildren<React.ComponentProps<typeof Card>>> = Card;
+
 interface FavoritesListProps {
   type: 'favorites' | 'toVisit';
   onPlacePress?: (place: Place) => void;
@@ -15,7 +17,7 @@ interface FavoritesListProps {
 const FavoritesList: React.FC<FavoritesListProps> = ({ type, onPlacePress }) => {
   const dispatch = useDispatch();
   const { theme } = useTheme();
-  const places = useSelector((state: RootState) => 
+  const places = useSelector((state: RootState) =>
     type === 'favorites' ? state.favorites.favorites : state.favorites.toVisit
   );
 
@@ -28,7 +30,7 @@ const FavoritesList: React.FC<FavoritesListProps> = ({ type, onPlacePress }) => 
   };
 
   const renderItem = ({ item }: { item: Place }) => (
-    <Card containerStyle={[styles.card, { backgroundColor: theme.colors.card }]}>
+    <CardWithChildren containerStyle={[styles.card, { backgroundColor: theme.colors.card }]}>
       <TouchableOpacity onPress={() => onPlacePress?.(item)}>
         <View style={styles.cardContent}>
           <View style={styles.cardHeader}>
@@ -56,7 +58,7 @@ const FavoritesList: React.FC<FavoritesListProps> = ({ type, onPlacePress }) => 
           </Text>
         </View>
       </TouchableOpacity>
-    </Card>
+    </CardWithChildren>
   );
 
   return (
@@ -68,7 +70,7 @@ const FavoritesList: React.FC<FavoritesListProps> = ({ type, onPlacePress }) => 
       ListEmptyComponent={
         <View style={styles.emptyContainer}>
           <Text style={[styles.emptyText, { color: theme.colors.text }]}>
-            {type === 'favorites' 
+            {type === 'favorites'
               ? 'Henüz favori mekan eklemediniz'
               : 'Gidilecek mekan listeniz boş'}
           </Text>
@@ -119,4 +121,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FavoritesList; 
+export default FavoritesList;

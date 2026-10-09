@@ -1,5 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
+import * as TaskManager from 'expo-task-manager';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { Place } from '../store/slices/placesSlice';
 import { getRecommendations, getDailyRecommendations } from './recommendations';
@@ -8,6 +10,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 let locationTaskName = 'background-location-task';
+const locationTaskUserKey = 'background-location-user-id';
 
 // Bildirimleri yapılandır
 Notifications.setNotificationHandler({
@@ -22,12 +25,12 @@ Notifications.setNotificationHandler({
 export const requestNotificationPermissions = async () => {
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
-  
+
   if (existingStatus !== 'granted') {
     const { status } = await Notifications.requestPermissionsAsync();
     finalStatus = status;
   }
-  
+
   if (finalStatus !== 'granted') {
     return false;
   }
@@ -62,12 +65,12 @@ export const requestNotificationPermissions = async () => {
 export const requestLocationPermissions = async () => {
   const { status: existingStatus } = await Location.getForegroundPermissionsAsync();
   let finalStatus = existingStatus;
-  
+
   if (existingStatus !== 'granted') {
     const { status } = await Location.requestForegroundPermissionsAsync();
     finalStatus = status;
   }
-  
+
   if (finalStatus !== 'granted') {
     return false;
   }
@@ -101,7 +104,7 @@ export const scheduleNearbyPlaceNotification = async (
 
 export const scheduleDailyRecommendationNotification = async (places: Place[]) => {
   const placeNames = places.map((place) => place.name).join(', ');
-  
+
   await Notifications.scheduleNotificationAsync({
     content: {
       title: 'Günün Mekan Önerileri',
@@ -109,9 +112,9 @@ export const scheduleDailyRecommendationNotification = async (places: Place[]) =
       data: { placeIds: places.map((p) => p.id) },
     },
     trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DAILY,
       hour: 11,
       minute: 0,
-      repeats: true,
     },
   });
 };
@@ -150,7 +153,7 @@ const sendNotification = async (userId: string, place: any, distance: number) =>
     // Kullanıcının bildirim ayarlarını al
     const userDoc = await getDoc(doc(db, 'users', userId));
     if (!userDoc.exists()) return;
-    
+
     const userData = userDoc.data();
     const settings = userData.notificationSettings || {
       enabled: true,
@@ -175,7 +178,7 @@ const sendNotification = async (userId: string, place: any, distance: number) =>
         body: `${place.name} ${distance.toFixed(1)} km uzaklıkta.`,
         data: { placeId: place.id },
         sound: settings.sound,
-        vibrate: settings.vibration ? [0, 250, 250, 250] : null,
+        vibrate: settings.vibration ? [0, 250, 250, 250] : undefined,
       },
       trigger: null,
     });
@@ -202,10 +205,12 @@ export const startLocationTracking = async (userId: string) => {
     // Mevcut task'i temizle
     const hasStarted = await Location.hasStartedLocationUpdatesAsync(locationTaskName)
       .catch(() => false);
-    
+
     if (hasStarted) {
       await Location.stopLocationUpdatesAsync(locationTaskName);
     }
+
+    await AsyncStorage.setItem(locationTaskUserKey, userId);
 
     // Yeni task'i başlat
     await Location.startLocationUpdatesAsync(locationTaskName, {
@@ -220,42 +225,6 @@ export const startLocationTracking = async (userId: string) => {
       showsBackgroundLocationIndicator: true,
     });
 
-    // Task tanımla
-    Location.TaskManager.defineTask(locationTaskName, async ({ data, error }) => {
-      if (error) return;
-
-      const { locations } = data as { locations: Location.LocationObject[] };
-      const location = locations[0];
-
-      // Kullanıcı ayarlarını al
-      const userDoc = await getDoc(doc(db, 'users', userId));
-      if (!userDoc.exists()) return;
-
-      const userData = userDoc.data();
-      const settings = userData.notificationSettings;
-
-      if (!settings?.enabled) return;
-
-      // Favori mekanları kontrol et
-      const favoritesDoc = await getDoc(doc(db, 'users', userId, 'favorites', 'places'));
-      if (!favoritesDoc.exists()) return;
-
-      const favorites = favoritesDoc.data();
-
-      for (const [placeId, place] of Object.entries(favorites)) {
-        const distance = calculateDistance(
-          location.coords.latitude,
-          location.coords.longitude,
-          place.location.latitude,
-          place.location.longitude
-        );
-
-        if (distance <= settings.distance) {
-          await sendNotification(userId, place, distance);
-        }
-      }
-    });
-
   } catch (error) {
     console.error('Konum takibi başlatılırken hata:', error);
   }
@@ -264,9 +233,10 @@ export const startLocationTracking = async (userId: string) => {
 // Arka plan konum takibini durdur
 export const stopLocationTracking = async () => {
   try {
+    await AsyncStorage.removeItem(locationTaskUserKey);
     const hasStarted = await Location.hasStartedLocationUpdatesAsync(locationTaskName)
       .catch(() => false);
-    
+
     if (hasStarted) {
       await Location.stopLocationUpdatesAsync(locationTaskName);
     }
@@ -275,13 +245,32 @@ export const stopLocationTracking = async () => {
   }
 };
 
+TaskManager.defineTask<{ locations: Location.LocationObject[] }>(locationTaskName, async ({ data, error }) => {
+  if (error || !data?.locations?.length) return;
+  const userId = await AsyncStorage.getItem(locationTaskUserKey);
+  if (!userId) return;
+  const userDoc = await getDoc(doc(db, 'users', userId));
+  if (!userDoc.exists()) return;
+  const settings = userDoc.data().notificationSettings;
+  if (!settings?.enabled) return;
+  const favoritesDoc = await getDoc(doc(db, 'users', userId, 'favorites', 'places'));
+  if (!favoritesDoc.exists()) return;
+  const location = data.locations[0];
+  const favorites = favoritesDoc.data() as Record<string, Place>;
+  for (const place of Object.values(favorites)) {
+    if (!place.location) continue;
+    const distance = calculateDistance(location.coords.latitude, location.coords.longitude, place.location.latitude, place.location.longitude);
+    if (distance <= settings.distance) await sendNotification(userId, place, distance);
+  }
+});
+
 // Favori mekanları kontrol et ve gerekirse bildirim gönder
 export const checkFavoriteLocations = async (userId: string) => {
   try {
     // Kullanıcının bildirim mesafesi ayarını al
     const userDoc = await getDoc(doc(db, 'users', userId));
     if (!userDoc.exists()) return;
-    
+
     const userData = userDoc.data();
     const notificationDistance = userData.notificationDistance || 1;
 
@@ -323,4 +312,4 @@ export const checkFavoriteLocations = async (userId: string) => {
   } catch (error) {
     console.error('Konum kontrolü sırasında hata:', error);
   }
-}; 
+};

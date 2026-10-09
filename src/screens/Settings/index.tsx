@@ -40,9 +40,7 @@ const SettingsScreen: React.FC = () => {
         </ListItem.Content>
         <Switch
           value={settings.notificationSettings.nearbyPlaces}
-          onValueChange={(value) =>
-            dispatch(updateNotificationSettings({ nearbyPlaces: value }))
-          }
+          onValueChange={(value) => { dispatch(updateNotificationSettings({ nearbyPlaces: value })); }}
         />
       </ListItem>
       <ListItem containerStyle={{ backgroundColor: theme.colors.card }}>
@@ -56,9 +54,7 @@ const SettingsScreen: React.FC = () => {
         </ListItem.Content>
         <Switch
           value={settings.notificationSettings.dailyRecommendations}
-          onValueChange={(value) =>
-            dispatch(updateNotificationSettings({ dailyRecommendations: value }))
-          }
+          onValueChange={(value) => { dispatch(updateNotificationSettings({ dailyRecommendations: value })); }}
         />
       </ListItem>
       <ListItem containerStyle={{ backgroundColor: theme.colors.card }}>
@@ -68,9 +64,7 @@ const SettingsScreen: React.FC = () => {
           </ListItem.Title>
           <Slider
             value={settings.notificationSettings.minRating}
-            onValueChange={(value) =>
-              dispatch(updateNotificationSettings({ minRating: value }))
-            }
+            onValueChange={(value) => { dispatch(updateNotificationSettings({ minRating: value })); }}
             minimumValue={1}
             maximumValue={5}
             step={0.5}
@@ -125,9 +119,7 @@ const SettingsScreen: React.FC = () => {
         </ListItem.Content>
         <Switch
           value={settings.mapSettings.showTraffic}
-          onValueChange={(value) =>
-            dispatch(updateMapSettings({ showTraffic: value }))
-          }
+          onValueChange={(value) => { dispatch(updateMapSettings({ showTraffic: value })); }}
         />
       </ListItem>
     </View>
@@ -149,9 +141,7 @@ const SettingsScreen: React.FC = () => {
         </ListItem.Content>
         <Switch
           value={settings.privacySettings.shareLocation}
-          onValueChange={(value) =>
-            dispatch(updatePrivacySettings({ shareLocation: value }))
-          }
+          onValueChange={(value) => { dispatch(updatePrivacySettings({ shareLocation: value })); }}
         />
       </ListItem>
       <ListItem containerStyle={{ backgroundColor: theme.colors.card }}>
@@ -165,9 +155,7 @@ const SettingsScreen: React.FC = () => {
         </ListItem.Content>
         <Switch
           value={settings.privacySettings.shareVisitHistory}
-          onValueChange={(value) =>
-            dispatch(updatePrivacySettings({ shareVisitHistory: value }))
-          }
+          onValueChange={(value) => { dispatch(updatePrivacySettings({ shareVisitHistory: value })); }}
         />
       </ListItem>
     </View>
@@ -238,4 +226,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SettingsScreen; 
+export default SettingsScreen;

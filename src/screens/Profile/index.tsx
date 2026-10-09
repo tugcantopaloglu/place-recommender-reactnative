@@ -13,6 +13,8 @@ import {
 } from 'react-native-elements';
 import { RootState } from '../../store';
 
+const CardWithChildren: React.ComponentType<React.PropsWithChildren<React.ComponentProps<typeof Card>>> = Card;
+
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
   const { theme } = useTheme();
@@ -44,7 +46,7 @@ const ProfileScreen: React.FC = () => {
   );
 
   const renderStats = () => (
-    <Card containerStyle={[styles.statsCard, { backgroundColor: theme.colors.card }]}>
+    <CardWithChildren containerStyle={[styles.statsCard, { backgroundColor: theme.colors.card }]}>
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
           <Text h4 style={{ color: theme.colors.text }}>
@@ -66,7 +68,7 @@ const ProfileScreen: React.FC = () => {
           <Text style={{ color: theme.colors.text }}>Ziyaret</Text>
         </View>
       </View>
-    </Card>
+    </CardWithChildren>
   );
 
   const renderMenuItems = () => (
@@ -174,4 +176,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileScreen; 
+export default ProfileScreen;

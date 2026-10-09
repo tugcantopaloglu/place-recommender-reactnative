@@ -4,7 +4,9 @@ import { ThemeContext } from '../context/ThemeContext';
 import { lightTheme, darkTheme } from '../theme';
 
 export const useTheme = () => {
-  const { isDark, toggleTheme } = useContext(ThemeContext);
+  const context = useContext(ThemeContext);
+  if (!context) throw new Error('useTheme must be used within a ThemeProvider');
+  const { isDark, toggleTheme } = context;
   const systemColorScheme = useColorScheme();
 
   const theme = isDark ? darkTheme : lightTheme;
@@ -15,4 +17,4 @@ export const useTheme = () => {
     isDark,
     toggleTheme,
   };
-}; 
+};

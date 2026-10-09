@@ -4,8 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { RootStackParamList } from './types';
-import AuthNavigator from './AuthNavigator';
-import MainNavigator from './MainNavigator';
+import { AuthNavigator } from './AuthNavigator';
+import { MainNavigator } from './MainNavigator';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -25,4 +25,4 @@ const RootNavigator = () => {
   );
 };
 
-export default RootNavigator; 
+export default RootNavigator;

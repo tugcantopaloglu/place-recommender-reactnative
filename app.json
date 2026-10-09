@@ -61,10 +61,13 @@
           "locationAlwaysPermission": "Arka planda çalışırken yakınınızdaki mekanlar hakkında bildirim alabilmek için konum bilginize ihtiyacımız var.",
           "locationWhenInUsePermission": "Yakınınızdaki mekanları göstermek ve size özel öneriler sunmak için konum bilginize ihtiyacımız var.",
           "isIosBackgroundLocationEnabled": true,
-          "isAndroidBackgroundLocationEnabled": true
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
         }
       ],
-      "expo-notifications"
+      "expo-notifications",
+      "expo-asset",
+      "expo-font"
     ],
     "extra": {
       "eas": {
@@ -73,4 +76,4 @@
     },
     "newArchEnabled": true
   }
-} 
+}
